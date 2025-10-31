@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tic Tac Toe (Human vs AI)</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <!-- Background Music -->
+  <audio id="bg-music" autoplay loop>
+    <source src="{{ url_for('static', filename='sounds/background.mp3') }}" type="audio/mpeg">
+  </audio>
+
+  <div class="container">
+    <h1>🤖 Tic Tac Toe</h1>
+    <div class="scoreboard">
+      <span>You ❌ : {{ score["X"] }}</span>
+      <span>AI ⭕ : {{ score["O"] }}</span>
+    </div>
+
+    <a href="{{ url_for('reset') }}" class="restart">🔄 Restart</a>
+
+    <table>
+      {% for i in range(0,9,3) %}
+      <tr>
+        {% for j in range(3) %}
+          {% set idx = i + j %}
+          <td class="{% if idx in combo %}highlight{% endif %}">
+            {% if winner is none and not draw and board[idx] == "" %}
+              <form method="post" action="{{ url_for('move') }}">
+                <input type="hidden" name="cell" value="{{ idx }}">
+                <button type="submit" class="cell">⬜</button>
+              </form>
+            {% else %}
+              <span class="cell">{{ board[idx] if board[idx] else "⬜" }}</span>
+            {% endif %}
+          </td>
+        {% endfor %}
+      </tr>
+      {% endfor %}
+    </table>
+
+    {% if winner %}
+      <h2 class="message win">🎉 {{ "You" if winner=="X" else "AI" }} wins!</h2>
+    {% elif draw %}
+      <h2 class="message draw">😅 It's a Draw!</h2>
+    {% endif %}
+  </div>
+
+  <script>
+    // Auto lower background music volume
+    document.getElementById("bg-music").volume = 0.3;
+  </script>
+</body>
+</html>
